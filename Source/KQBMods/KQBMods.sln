@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamClientMod", "SteamClientMod\SteamClientMod.csproj", "{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanAudioMod", "PanAudioMod\PanAudioMod.csproj", "{F2A8B639-4C23-4974-A9B3-8424E64EB51C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamlessClientMod", "SteamlessClientMod\SteamlessClientMod.csproj", "{70BC0545-A8E0-4978-BAC5-B1794EEEBBFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KQB-o-ween", "KQB-o-ween\KQB-o-ween.csproj", "{D897A788-1CD7-4A3C-97A5-8757B9200ACF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosersCanDanceMod", "LosersCanDance\LosersCanDanceMod.csproj", "{1144CBF0-8BF4-4732-B68D-54446A1EA70A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A8B639-4C23-4974-A9B3-8424E64EB51C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A8B639-4C23-4974-A9B3-8424E64EB51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A8B639-4C23-4974-A9B3-8424E64EB51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A8B639-4C23-4974-A9B3-8424E64EB51C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70BC0545-A8E0-4978-BAC5-B1794EEEBBFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70BC0545-A8E0-4978-BAC5-B1794EEEBBFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70BC0545-A8E0-4978-BAC5-B1794EEEBBFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70BC0545-A8E0-4978-BAC5-B1794EEEBBFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D897A788-1CD7-4A3C-97A5-8757B9200ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D897A788-1CD7-4A3C-97A5-8757B9200ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D897A788-1CD7-4A3C-97A5-8757B9200ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D897A788-1CD7-4A3C-97A5-8757B9200ACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1144CBF0-8BF4-4732-B68D-54446A1EA70A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1144CBF0-8BF4-4732-B68D-54446A1EA70A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1144CBF0-8BF4-4732-B68D-54446A1EA70A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1144CBF0-8BF4-4732-B68D-54446A1EA70A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1AA1B5E-5DAA-48FF-A700-A145A993F0C1}
+	EndGlobalSection
+EndGlobal
