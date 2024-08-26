@@ -1,0 +1,4 @@
+- ensure new version check
+- get sprite sheets modded
+- gather all audio files
+- get audio modded
