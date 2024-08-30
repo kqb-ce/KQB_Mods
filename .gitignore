@@ -1,0 +1,11 @@
+Source/KQBMods/Libraries/Assembly-CSharp.dll
+Source/KQBMods/Libraries/Assembly-CSharp-firstpass.dll
+Source/KQBMods/Libraries/GameLogic.dll
+Source/KQBMods/Libraries/GameSparksSrc.dll
+Source/KQBMods/Libraries/Newtonsoft.Json.dll
+Source/KQBMods/Libraries/UnityEngine.CoreModule.dll
+Source/KQBMods/Libraries/UnityEngine.dll
+Source/KQBMods/Libraries/UnityEngine.UnityWebRequestModule.dll
+Source/KQBMods/**/bin
+Source/KQBMods/**/obj
+.vs

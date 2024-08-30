@@ -1,20 +1,22 @@
 ﻿using HarmonyLib;
-using LiquidBit.KillerQueenX;
-using System.Reflection;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 namespace SteamlessClientMod
 {
     [HarmonyPatch(typeof(DevConCommands))]
     [HarmonyPatch("JoinServer")]
-    public static Dictionary<string, CommunityServerConnection> m_CommunityServerDict;
     public static class JoinServer_Patch
     {
-        public static bool Prefix(DevConCommands __instance, string[] p)
+        public static Dictionary<string, CommunityServerConnection> m_CommunityServerDict;
+
+        public static bool Prefix(string[] p)
         {
             if (p.Length >= 2)
             {   
-            return true;
+              return true;
             }
 
             if( m_CommunityServerDict == null)
@@ -22,10 +24,11 @@ namespace SteamlessClientMod
                 using (WebClient wc = new WebClient())
                 {
                     string json = wc.DownloadString("https://kqbfileserver.fly.dev/servers.json");
-                    m_CommunityServerDict = (new JavaScriptSerializer()).Deserialize<Dictionary<string, CommunityServerConnection>>(json);
+                    m_CommunityServerDict = JsonConvert.DeserializeObject<Dictionary<string, CommunityServerConnection>>(json);
                 }
             }
-            CommunityServerConnection conn = m_CommunityServerDict.getField(p[0]);
+            CommunityServerConnection conn = new CommunityServerConnection();
+            m_CommunityServerDict.TryGetValue(p[0], out conn);
             UIManager.Instance.DirectConnectToServer(conn.ip, conn.port, loopback: false);
                   
           return false;
