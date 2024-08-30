@@ -15,13 +15,14 @@ namespace SteamlessClientMod
 		  {   
             return true;
           }
-          string jsonFilePath = @"servers.json";
-        
-          string json = File.ReadAllText(jsonFilePath);
-          Dictionary<string, CommunityServerConnection> json_Dictionary = (new JavaScriptSerializer()).Deserialize<Dictionary<string, CommunityServerConnection>>(json);
+          using (WebClient wc = new WebClient())
+          {
+            string json = wc.DownloadString("https://kqbfileserver.fly.dev/servers.json");
+            Dictionary<string, CommunityServerConnection> json_Dictionary = (new JavaScriptSerializer()).Deserialize<Dictionary<string, CommunityServerConnection>>(json);
 
-          CommunityServerConnection conn = json_Dictionary.getField(p[0])
-          UIManager.Instance.DirectConnectToServer(conn.ip, conn.port, loopback: false);
+            CommunityServerConnection conn = json_Dictionary.getField(p[0])
+            UIManager.Instance.DirectConnectToServer(conn.ip, conn.port, loopback: false);
+          }        
           return false;
         }
     }
