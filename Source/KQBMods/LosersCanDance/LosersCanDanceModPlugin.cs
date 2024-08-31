@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 
-namespace SteamlessClientMod
+namespace LosersCanDanceMod
 {
     [BepInPlugin(myGUID, pluginName, versionString)]
     public class SteamlessClientModPlugin : BaseUnityPlugin

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
-namespace SteamlessClientMod
+namespace JoinServerShortcuts
 {
     [HarmonyPatch(typeof(DevConCommands))]
     [HarmonyPatch("JoinServer")]

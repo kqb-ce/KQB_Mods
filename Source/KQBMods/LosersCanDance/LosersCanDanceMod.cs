@@ -3,7 +3,7 @@ using HarmonyLib;
 using LiquidBit.KillerQueenX;
 using UnityEngine;
 
-namespace SteamlessClientMod
+namespace LosersCanDanceMod
 {
     [HarmonyPatch(typeof(PostMatchGameMode))]
     [HarmonyPatch("ProcessLocalCommand")]

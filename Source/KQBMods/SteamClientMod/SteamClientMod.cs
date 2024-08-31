@@ -87,19 +87,36 @@ namespace SteamClientMod
     }
 
     [HarmonyPatch(typeof(GameManager))]
-    [HarmonyPatch("InitPlayerPrefs")]
-    public static class PlayerPrefs_Patch
+    [HarmonyPatch("CreatePlatformClient")]
+    public static class CreatePlatformClient_Patch
     {
-        public static ManualLogSource logger;
-
-        public static void Prefix()
+        public static bool Prefix(IPlatformClient ___platformClient, GameObject ___steamManagerPrefab)
         {
-            MockClient c = (MockClient)GameManager.GMInstance.platformClient;
-            FieldInfo smp = c.GetType().GetField("steamManagerPrefab", BindingFlags.Instance | BindingFlags.NonPublic);
-            GameObject go = (GameObject)smp.GetValue(c);
-            LiquidBit.KillerQueenX.SteamClient client = new LiquidBit.KillerQueenX.SteamClient(go);
+            LiquidBit.KillerQueenX.SteamClient client = new LiquidBit.KillerQueenX.SteamClient(___steamManagerPrefab);
             client.Init();
-            GameManager.GMInstance.platformClient = client;
+            ___platformClient = client;
+            return false;
         }
     }
+
+/**
+    public static class PlayerPrefs_Patch
+    {
+
+        [HarmonyPatch(typeof(GameManager))]
+        [HarmonyPatch("InitPlayerPrefs")]
+        public static class PlayerPrefs_Patch
+        {
+            public static ManualLogSource logger;
+
+            public static void Prefix()
+            {
+                MockClient c = (MockClient)GameManager.GMInstance.platformClient;
+                FieldInfo smp = c.GetType().GetField("steamManagerPrefab", BindingFlags.Instance | BindingFlags.NonPublic);
+                GameObject go = (GameObject)smp.GetValue(c);
+                LiquidBit.KillerQueenX.SteamClient client = new LiquidBit.KillerQueenX.SteamClient(go);
+                client.Init();
+                GameManager.GMInstance.platformClient = client;
+            }
+        }**/
 }

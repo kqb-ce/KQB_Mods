@@ -9,9 +9,9 @@ namespace SteamlessClientMod
     [HarmonyPatch("ValidateOwnership")]
     public static class Valid_Patch
     {
-        public static bool Prefix(MockClient __instance)
+        public static bool Prefix(bool ___steamInitialized)
         {
-            __instance.GetType().GetField("steamInitialized", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(__instance, true);
+            ___steamInitialized = true;
             return true;
         }
 
