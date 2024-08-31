@@ -6,6 +6,6 @@ Source/KQBMods/Libraries/Newtonsoft.Json.dll
 Source/KQBMods/Libraries/UnityEngine.CoreModule.dll
 Source/KQBMods/Libraries/UnityEngine.dll
 Source/KQBMods/Libraries/UnityEngine.UnityWebRequestModule.dll
-Source/KQBMods/**/bin
-Source/KQBMods/**/obj
+Source/KQBMods/**/bin/
+Source/KQBMods/**/obj/
 .vs
