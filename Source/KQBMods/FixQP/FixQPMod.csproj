@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{767F8A7B-A92B-4766-9794-0FD5A0BA5A28}</ProjectGuid>
+    <ProjectGuid>{883121E2-8D8F-4516-9D04-6CBE2B168EA7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SteamClientMod</RootNamespace>
-    <AssemblyName>SteamClientMod</AssemblyName>
+    <RootNamespace>FixQP</RootNamespace>
+    <AssemblyName>FixQP</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -35,27 +35,17 @@
       <HintPath>..\Libraries\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\Libraries\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\Libraries\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="GameLogic">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\GameLogic.dll</HintPath>
-    </Reference>
-    <Reference Include="GameSparksSrc">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\GameSparksSrc.dll</HintPath>
-    </Reference>
-    <Reference Include="Nakama, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\Nakama.dll</HintPath>
+      <HintPath>..\Libraries\GameLogic.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,23 +56,16 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\UnityEngine.dll</HintPath>
+      <HintPath>..\Libraries\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\..\..\..\..\KQB_Mods\Source\KQBMods\Libraries\proprietary\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\Libraries\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameSparksBasePlatformClientMod.cs" />
-    <Compile Include="LB_AchievementManagerMod.cs" />
-    <Compile Include="NakamaUtil.cs" />
-    <Compile Include="SteamClientMod.cs" />
-    <Compile Include="SteamClientModPlugin.cs" />
+    <Compile Include="FixQP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnityWebRequestAdapter.cs" />
+    <Compile Include="FixQPPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
