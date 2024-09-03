@@ -1,38 +1,115 @@
 ﻿using GameLogic;
+using GameLogic.WebService.Model;
 using HarmonyLib;
 using LiquidBit.KillerQueenX;
+using LiquidBit.KillerQueenX.Utility;
+using Nakama;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using static MatchFinder;
+using static MatchmakerClient;
 
 namespace fixQP
 {
 	[HarmonyPatch(typeof(MatchmakerClient), "StartMatchmaking")]
 	public class Patches
 	{
-		class SimpleEnumerator : IEnumerable
+		public class SimpleEnumerator : IEnumerable
 		{
 			public IEnumerator enumerator;
 			public Action prefixAction, postfixAction;
 			public Action<object> preItemAction, postItemAction;
 			public Func<object, object> itemAction;
 			IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-			public IEnumerator GetEnumerator(List<GameLogic.WebService.Model.Player> players, MatchType matchType, string partyId, MatchmakerClient mmClient)
+			private List<GameLogic.WebService.Model.Player> players;
+			private MatchType matchType;
+			private string partyId;
+			MatchmakerClient mmClient;
+			public SimpleEnumerator()
+			{
+			}
+			public SimpleEnumerator(List<GameLogic.WebService.Model.Player> players, MatchType matchType, string partyId, MatchmakerClient mmClient)
+			{
+				this.players = players;
+				this.matchType = matchType;
+				this.partyId = partyId;
+				this.mmClient = mmClient;
+			}
+			public IEnumerator GetEnumerator()
 			{
 				prefixAction();
-				enumerator.MoveNext();
-				//while (enumerator.MoveNext())
+				while (enumerator.MoveNext())
 				{
-					enumerator.MoveNext();
 					var item = enumerator.Current;
 					preItemAction(item);
 					yield return itemAction(item);
 					postItemAction(item);
 				}
-				postfixAction();
+			}
+
+			public IEnumerator doRealMM(MatchFinder matchFinder)
+			{
+				IPlatformClient platformClient = GameManager.GMInstance.platformClient;
+				string jsonBody = JsonConvert.SerializeObject(new StartMatchmaking.Request
+				{
+					players = players,
+					matchType = matchType,
+					partyId = partyId,
+					platformId = platformClient.GetPlatformID(),
+					crossplayEnabled = GameManager.GMInstance.partyManager.PartyAllowsCrossplay(),
+					preferredRegions = RegionManager.GetPreferredRegionKeys()
+				});
+
+				ISocket sock = Socket.From(SteamClientMod.NakamaUtils.GetClient());
+				Task sockTask = sock.ConnectAsync(SteamClientMod.NakamaUtils.RestoreSession());
+				Debug.Log("Connecting Socket");
+				yield return new WaitUntil(() => sockTask.IsCompleted);
+				Debug.Log("Socket Connected");
+				Task<IMatchmakerTicket> mmTask = sock.AddMatchmakerAsync("*", 2, 8);
+				Debug.Log("match maker started...");
+				yield return new WaitUntil(() => mmTask.IsCompleted);
+				Debug.Log("MatchMaker returned...");
+				Debug.Log(mmTask.Result.Ticket);
+
+				Debug.Log("Ticket id: " + mmTask.Result.Ticket);
+				mmClient.ticketId = mmTask.Result.Ticket;
+				mmClient.estimatedWaitTimeInSeconds = 0;
+				mmClient.state = MatchmakerClient.State.Searching;
+				typeof(MatchFinder).GetMethod("MatchmakerClientOnStateUpdate", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(matchFinder, new object[] { new StateUpdateMessage
+		{
+			state = mmClient.state,
+			estimatedWaitTime = mmClient.estimatedWaitTimeInSeconds
+		} });
+
+
+				if (matchFinder.matchmakerClient.state == MatchmakerClient.State.Searching)
+				{
+					matchFinder.gameManager.partyManager.NotifyPartyStartedMatchmaking(matchFinder.matchmakerClient.estimatedWaitTimeInSeconds);
+					yield return matchFinder.matchmakerClient.PollMatchmakingStatus(matchType);
+					if (matchFinder.matchmakerClient.lastError == MatchmakerClient.Error.None)
+					{
+						Debug.Log("GETTING HERE NO ISSUE");
+						matchFinder.gameManager.partyManager.NotifyPartyOfTicketIdToConnectTo(matchFinder.matchmakerClient.ticketId, matchType);
+						yield return matchFinder.ConnectToMatchWithTicketId(matchFinder.matchmakerClient.ticketId, matchFinder.GetPlayersForConnection(), matchType);
+					}
+					else if (matchFinder.matchmakerClient.lastError != MatchmakerClient.Error.Cancelled)
+					{
+						Debug.Log("OH IS thiS ITE");
+
+						typeof(MatchFinder).GetMethod("OnJoinedServerFailure", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(matchFinder, new object[] { matchFinder.matchmakerClient.lastError });
+					}
+				}
+				else if (matchFinder.matchmakerClient.lastError != 0)
+				{
+					Debug.Log("MAYBE A PROBLEM");
+
+					typeof(MatchFinder).GetMethod("OnJoinedServerFailure", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(matchFinder, new object[] { matchFinder.matchmakerClient.lastError });
+				}
 			}
 		}
 		static void Postfix(MatchmakerClient __instance, ref IEnumerator __result, List<GameLogic.WebService.Model.Player> players, MatchType matchType, string partyId)
@@ -56,132 +133,28 @@ namespace fixQP
 				postItemAction = postItemAction,
 				itemAction = itemAction
 			};
-			__result = myEnumerator.GetEnumerator(players, matchType, partyId, __instance);
+			__result = myEnumerator.GetEnumerator();
 		}
 
 	}
-}
-	/**
-    [HarmonyPatch(typeof(MatchFinder))]
-    [HarmonyPatch("StartMatchmaking")]
-    public static class StartMatchmaking_Patch
-    {
-        public static bool Prefix(MatchFinder __instance, MatchType matchType, JoinedServerError ___OnJoinedServerFailure)
-        {
-            __instance.StartCoroutine(new MMUtils().StartMatchmakingCoroutine(matchType, __instance, ___OnJoinedServerFailure));
-            __instance.GetType().GetField("steamInitialized", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(__instance, true);
-            return false;
-        }
 
-    }
-
-    public class MMUtils
-    {
-        public IEnumerator StartMatchmakingCoroutine(MatchType matchType, MatchFinder matchFinder, JoinedServerError OnJoinedServerFailure) 
-        {
-
-            yield return StartMatchmaking(matchFinder.GetPlayersForMatch(), matchType, matchFinder.gameManager.partyManager.GetParty().teamId);
-            if (matchFinder.matchmakerClient.state == MatchmakerClient.State.Searching)
-            {
-				matchFinder.gameManager.partyManager.NotifyPartyStartedMatchmaking(matchFinder.matchmakerClient.estimatedWaitTimeInSeconds);
-                yield return matchFinder.matchmakerClient.PollMatchmakingStatus(matchType);
-                if (matchFinder.matchmakerClient.lastError == MatchmakerClient.Error.None)
-                {
-					matchFinder.gameManager.partyManager.NotifyPartyOfTicketIdToConnectTo(matchFinder.matchmakerClient.ticketId, matchType);
-                    yield return matchFinder.ConnectToMatchWithTicketId(matchFinder.matchmakerClient.ticketId, matchFinder.GetPlayersForConnection(), matchType);
-                }
-                else if (matchFinder.matchmakerClient.lastError != MatchmakerClient.Error.Cancelled)
-                {
-					OnJoinedServerFailure(matchFinder.matchmakerClient.lastError);
-                }
-            }
-            else if (matchFinder.matchmakerClient.lastError != 0)
-            {
-				OnJoinedServerFailure(matchFinder.matchmakerClient.lastError);
-            }
-        }
-
-		public IEnumerator StartMatchmaking(List<GameLogic.WebService.Model.Player> players, MatchType matchType, string partyId)
+	[HarmonyPatch(typeof(MatchFinder), "StartMatchmaking")]
+	public class Patches2
+	{
+		static void Postfix(MatchFinder __instance, MatchType matchType)
 		{
-			Reset(Error.None);
-			running = true;
-			this.players = players;
-			this.matchType = matchType;
-			this.partyId = partyId;
-			Debug.Log("Starting matchmaking with player ids: ");
-			foreach (GameLogic.WebService.Model.Player player in players)
-			{
-				Debug.Log(player.playerId);
-			}
-			SetState(State.SentRequest);
-			IPlatformClient platformClient = GameManager.GMInstance.platformClient;
-			string jsonBody = JsonConvert.SerializeObject(new StartMatchmaking.Request
-			{
-				players = players,
-				matchType = matchType,
-				partyId = partyId,
-				platformId = platformClient.GetPlatformID(),
-				crossplayEnabled = GameManager.GMInstance.partyManager.PartyAllowsCrossplay(),
-				preferredRegions = RegionManager.GetPreferredRegionKeys()
-			});
-			Debug.Log("---- GS ENV: " + EnvironmentConfig.Instance.environment);
-			yield return KQBWebServiceClient.MakeRequest("startmatchmaking", jsonBody, delegate (UnityWebRequest webRequest)
-			{
-				if (state == State.SentRequest)
-				{
-					string text = webRequest.downloadHandler.text;
-					if (!webRequest.isNetworkError && !webRequest.isHttpError)
-					{
-						StartMatchmaking.Response response = JsonConvert.DeserializeObject<StartMatchmaking.Response>(text);
-						if (response != null)
-						{
-							switch (response.status)
-							{
-								case GameLogic.WebService.Model.StartMatchmaking.Status.Success:
-									Debug.Log("GameLift Ticket id: " + response.ticketId);
-									ticketId = response.ticketId;
-									estimatedWaitTimeInSeconds = response.estimatedWaitTimeInSeconds;
-									SetState(State.Searching);
-									break;
-								case GameLogic.WebService.Model.StartMatchmaking.Status.InTimeout:
-									{
-										for (int i = 0; i < response.profilesInTimeout.Count; i++)
-										{
-											GameLogic.Profile profile = response.profilesInTimeout[i];
-											GameManager.GMInstance.profileCache.AddProfileToCache(profile);
-										}
-										Reset(Error.InRankedTimeout);
-										break;
-									}
-								case GameLogic.WebService.Model.StartMatchmaking.Status.ExistingRankedGame:
-									Reset(Error.ExistingRankedGame);
-									break;
-								case GameLogic.WebService.Model.StartMatchmaking.Status.TooManyControllers:
-									Reset(Error.TooManyControllers);
-									break;
-							}
-						}
-						else
-						{
-							Reset(Error.WebServiceError);
-						}
-					}
-					else
-					{
-						if (text == Auth.InvalidClientVersionError)
-						{
-							Reset(Error.InvalidClientVersion);
-						}
-						else if (text == Auth.OutsideTimeWindowError)
-						{
-							Reset(Error.OutsideTimeWindow);
-						}
-						else
-						{
-							Reset(Error.WebServiceError);
-						}
-						Debug.Log(text);
-					}
-				}
-			});
-		}**/
+			GameManager.GMInstance.StartCoroutine(new Patches.SimpleEnumerator(__instance.GetPlayersForMatch(), matchType, GameManager.GMInstance.partyManager.GetParty().teamId, __instance.matchmakerClient).doRealMM(__instance));
+		}
+	}
+
+	[HarmonyPatch(typeof(PartyManager))]
+	[HarmonyPatch("NotifyPartyStartedMatchmaking")]
+	class Testing_Patch
+	{
+		static void Prefix(int estimatedWaitTime)
+		{
+			Debug.Log("RUNNNING THE UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!! " + estimatedWaitTime);
+		}
+	}
+
+}

@@ -1,14 +1,14 @@
-﻿using BepInEx;
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
+using BepInEx;
 using HarmonyLib;
 
-namespace SteamlessClientMod
+namespace ProfileCacheMod
 {
     [BepInPlugin(myGUID, pluginName, versionString)]
-    public class SteamlessClientModPlugin : BaseUnityPlugin
+    public class ProfileCacheModPlugin : BaseUnityPlugin
     {
-        private const string myGUID = "com.treebones.steamlessclientmod";
-        private const string pluginName = "Steamless Client Mod";
+        private const string myGUID = "com.treebones.profilecachemod";
+        private const string pluginName = "Profile Cache Mod";
         private const string versionString = "1.0.0";
 
         private static readonly Harmony harmony = new Harmony(myGUID);
