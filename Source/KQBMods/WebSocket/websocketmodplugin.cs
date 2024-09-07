@@ -1,14 +1,14 @@
-﻿using BepInEx.Logging;
-using BepInEx;
+﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 
-namespace ProfileCacheMod
+namespace WebSocket
 {
     [BepInPlugin(myGUID, pluginName, versionString)]
-    public class ProfileCacheModPlugin : BaseUnityPlugin
+    public class websocketmodplugin : BaseUnityPlugin
     {
-        private const string myGUID = "com.treebones.profilecachemod";
-        private const string pluginName = "Profile Cache Mod";
+        private const string myGUID = "com.treebones.websocketmod";
+        private const string pluginName = "Web Socket Mod";
         private const string versionString = "1.0.0";
 
         private static readonly Harmony harmony = new Harmony(myGUID);

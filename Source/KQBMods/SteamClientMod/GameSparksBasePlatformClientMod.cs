@@ -14,7 +14,7 @@ namespace SteamClientMod
 		public static bool Prefix(StatusManager __instance, IPlatformClient ___platformClient, bool ___needsStatusUpdate, bool ___updateStatusInProgress, GameLogic.Profile.Status ___profileStatus,
 								  List<Action<bool>> ___updateStatusCallbacks)
 		{
-			if (!___needsStatusUpdate)
+			/**if (!___needsStatusUpdate)
 			{
 				return false;
 			}
@@ -29,8 +29,8 @@ namespace SteamClientMod
 				}
 				___updateStatusCallbacks.Clear();
 				___updateStatusInProgress = false;
-			});
-			return false;
+			});**/
+			return true;
 		} 
 	}
 
@@ -39,10 +39,11 @@ namespace SteamClientMod
 	public static class SetPartyStatus_Patch 
 	{
 		public static bool Prefix(GameSparksBasePlatformClient __instance, bool inRemoteParty, bool partyLeader, int partyMemberCount, int localPlayerCount)
-		{
+		{/**
 			SteamClientNoGS client = (SteamClientNoGS)__instance;
 			client.NoGSSetPartyStatus(inRemoteParty, partyLeader, partyMemberCount, localPlayerCount);
-			return false;
+			return false;**/
+			return true;
 		}
 	}
 }
