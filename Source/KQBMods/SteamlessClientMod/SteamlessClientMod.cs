@@ -9,7 +9,7 @@ namespace SteamlessClientMod
     [HarmonyPatch("ValidateOwnership")]
     public static class Valid_Patch
     {
-        public static bool Prefix(bool ___steamInitialized)
+        public static bool Prefix(ref bool ___steamInitialized)
         {
             ___steamInitialized = true;
             return true;
