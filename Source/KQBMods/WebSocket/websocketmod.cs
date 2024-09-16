@@ -70,7 +70,7 @@ namespace WebSocket
         {
             public static bool Prefix(GSInstance __instance, bool ____ready, string ____currentSocketUrl, GSRequest request)
             {
-                Debug.Log("==========WE DID TRY TO SEND A MESSAGE THO===============");
+                Debug.Log("==========SENDING REQUEST===============");
                 Debug.Log(request.JSON);
                 
                 return true;
