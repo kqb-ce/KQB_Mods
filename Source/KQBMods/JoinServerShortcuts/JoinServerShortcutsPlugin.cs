@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 
-namespace LosersCanDanceMod
+namespace JoinServerShortcuts
 {
     [BepInPlugin(myGUID, pluginName, versionString)]
     public class JoinServerShortcutsPlugin : BaseUnityPlugin

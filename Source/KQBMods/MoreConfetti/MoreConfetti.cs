@@ -7,56 +7,53 @@ using UnityEngine;
 namespace MoreConfetti
 {
     [HarmonyPatch(typeof(DeathEffectGradients))]
-    [HarmonyPatch("SetParticleSystems")]
+    [HarmonyPatch("Init")]
     public static class ParticleSystems_Patch
     {
-        public static int count = 0;
-        public static int ogMax1;
-        public static int ogMax2;
-        public static float duration2;
-        public static float emission1;
-        public static float emission2;
-
-        public static void Postfix(ref ParticleSystem ___bigParticleSystem, ref ParticleSystem ___littleParticleSystem, Team team)
+        public static void Postfix(ref ParticleSystem ___bigParticleSystem, ref ParticleSystem ___littleParticleSystem)
         {
+
             ParticleSystem.MainModule main = ___bigParticleSystem.main;
             ParticleSystem.MainModule main2 = ___littleParticleSystem.main;
             ParticleSystem.TrailModule trails = ___littleParticleSystem.trails;
+            Debug.Log("max big: " + main.maxParticles);
+            Debug.Log("Max radius: " + ___bigParticleSystem.shape.radius);
 
-            if (ParticleSystems_Patch.count % 2 == 0)
-            {
-                Debug.Log("BIG CONFEttI");
-                ParticleSystems_Patch.ogMax1 = main.maxParticles;
-                ParticleSystems_Patch.ogMax2 = main2.maxParticles;
+            main.maxParticles = 2147483647;
+            main2.maxParticles = 2147483647;
 
-                main.maxParticles = main.maxParticles * 20;
-                main2.maxParticles = main2.maxParticles * 20;
+            ParticleSystem.EmissionModule bigEmission = ___bigParticleSystem.emission;
+            ParticleSystem.EmissionModule littleEmission = ___littleParticleSystem.emission;
 
-                ParticleSystems_Patch.duration2 = main2.duration;
-                //main.duration = main.duration + 1f;
-                main2.duration = main2.duration + 1f;
+            littleEmission.rateOverTime = new ParticleSystem.MinMaxCurve(1000.0f);
+            bigEmission.rateOverTime = new ParticleSystem.MinMaxCurve(1000.0f);
 
-                ParticleSystems_Patch.emission1 = ___bigParticleSystem.emissionRate;
-                ParticleSystems_Patch.emission2 = ___littleParticleSystem.emissionRate;
-                ___bigParticleSystem.emissionRate = 60f;
-                ___littleParticleSystem.emissionRate = 60f;
-            }
-            else {
-                Debug.Log("little");
+            ParticleSystem.ShapeModule bigShape = ___bigParticleSystem.shape;
+            ParticleSystem.ShapeModule lilShape = ___littleParticleSystem.shape;
 
-                main.maxParticles = ParticleSystems_Patch.ogMax1;
-                main2.maxParticles = ParticleSystems_Patch.ogMax2;
+            bigShape.radius = 3f;
+            lilShape.radius = 3f;
 
-                main2.duration = ParticleSystems_Patch.duration2;
-
-                ___bigParticleSystem.emissionRate = ParticleSystems_Patch.emission1;
-                ___littleParticleSystem.emissionRate = ParticleSystems_Patch.emission2;
-
-            }
-            ParticleSystems_Patch.count++;
 
         }
 
     }
 
+    [HarmonyPatch(typeof(QueenVisuals))]
+    [HarmonyPatch("Awake")]
+    public static class QueenTrail_Patch
+    {
+        public static bool has_ran = false;
+        public static void Postfix(ref ParticleSystem ___particalSystem)
+        {
+
+                ParticleSystem.MainModule main = ___particalSystem.main;
+                main.maxParticles = 2147483647;
+                Debug.Log("duration: " + main.duration);
+                main.duration = 10f;
+                ParticleSystem.EmissionModule bigEmission = ___particalSystem.emission;
+                bigEmission.rateOverTime = new ParticleSystem.MinMaxCurve(1000.0f);
+                
+        }
+    }
 }
