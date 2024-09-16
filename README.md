@@ -2,6 +2,7 @@
 - `JoinServerShortcuts.dll` - Adds shortcuts to dev console to allow direct connection to community servers, ex `joinserver dfw1` instead of `joinserver 333.333.333.333 5555`, also lists community servers with `joinserver list`
 - `LosersCanDanceMod.dll` - Losing team can dance on the end screen (yes, it works serverside as well)
 - `PanAudioMod.dll` - Fixes queen and mace audio to work in stereo
+- `MoreConfetti.dll` - Adds too much confetti during kills
 
 ## Installing
 ### Windows:
