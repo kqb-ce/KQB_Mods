@@ -1,9 +1,10 @@
 # Mods Description
 - `kqb.treebones.emotemapping.dll` - Re-enables remapping emotes from Options menu
+- `kqb.treebones.snailfix.dll` - Drone no longer appears behind snail on victory
 
 ## Windows
 ### To Install for the first time
-1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/FixEmoteMappingMod.zip)
+1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/KQB_Mods.zip)
 2. extract to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black`
 
 The mods are now installed & should be working the next time you start the game.
@@ -26,13 +27,13 @@ now your game is back to normal.
 ### To Uninstall a single mod:
 Simply remove the `.dll` from the `plugins` directory. 
 
-For example, to remove EmoteMapping but keep Any other mod you have, remove `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins\kqb.treebones.emotemapping.dll`
+For example, to remove EmoteMapping but keep SnailFix, remove `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins\kqb.treebones.emotemapping.dll`
 
 
 ## Linux: 
 ### To Install for the first time
 
-1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/FixEmoteMappingMod.zip)
+1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/KQB_Mods.zip)
 2. extract to `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black` (or wherever your local game files are)
 3. In your steam library, select Killer Queen Black, click the settings icon, select properties and in the "Launch Options" section add the following: `WINEDLLOVERRIDES="winhttp.dll=n,b" %command%`
 
@@ -57,7 +58,7 @@ now your game is back to normal.
 
 Simply remove the `.dll` from the `plugins` directory. 
 
-For example, to remove EmoteMapping but keep Any other mod you have, remove `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/BepInEx/plugins/kqb.treebones.emotemapping.dll`
+For example, to remove EmoteMapping but keep SnailFix, remove `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/BepInEx/plugins/kqb.treebones.emotemapping.dll`
 
 ---
 ## Building from source
