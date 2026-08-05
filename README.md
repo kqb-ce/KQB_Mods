@@ -1,10 +1,9 @@
 # Mods Description
-- `FatLobbies.dll` - Increases Lobby Cap from 8 to 12 so that a lobby can contain 8 players and 4 spectators
-- `PanAudioMod.dll` - Fixes queen and mace audio to work in stereo
+- `kqb.treebones.emotemapping.dll` - Re-enables remapping emotes from Options menu
 
 ## Windows
 ### To Install for the first time
-1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/KQB_Mods.zip)
+1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/FixEmoteMappingMod.zip)
 2. extract to `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black`
 
 The mods are now installed & should be working the next time you start the game.
@@ -20,19 +19,20 @@ Remove the following objects:
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\doorstop_config
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\.doorstop_version
  - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\winhttp.dll
+ - C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\changelog
 
 now your game is back to normal.
 
 ### To Uninstall a single mod:
 Simply remove the `.dll` from the `plugins` directory. 
 
-For example, to remove PanAudio but keep FatLobbies remove `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins\PanAudio.dll`
+For example, to remove EmoteMapping but keep Any other mod you have, remove `C:\Program Files (x86)\Steam\steamapps\common\Killer Queen Black\BepInEx\plugins\kqb.treebones.emotemapping.dll`
 
 
 ## Linux: 
 ### To Install for the first time
 
-1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/KQB_Mods.zip)
+1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/FixEmoteMappingMod.zip)
 2. extract to `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black` (or wherever your local game files are)
 3. In your steam library, select Killer Queen Black, click the settings icon, select properties and in the "Launch Options" section add the following: `WINEDLLOVERRIDES="winhttp.dll=n,b" %command%`
 
@@ -47,6 +47,7 @@ To completely uninstall BepInEx and all mods, remove the following objects:
  - /home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/doorstop_config
  - /home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/.doorstop_version
  - /home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/winhttp.dll
+ - /home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/changelog
 
 And remove `WINEDLLOVERRIDES="winhttp.dll=n,b" %command%` from the games launch options
 
@@ -56,14 +57,14 @@ now your game is back to normal.
 
 Simply remove the `.dll` from the `plugins` directory. 
 
-For example, to remove `PanAudio` but keep `FatLobbies` remove `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/BepInEx/plugins/PanAudio.dll`
+For example, to remove EmoteMapping but keep Any other mod you have, remove `/home/$USER/.local/share/Steam/steamapps/common/Killer Queen Black/BepInEx/plugins/kqb.treebones.emotemapping.dll`
 
 ---
 ## Building from source
 
 This assumes you have already have BepInEx installed 
 
-1. Install visual studio 2019
+1. Install visual studio 2026
 2. clone this repo
 3. Open the solution file for the mod you wish to build
 4. This repo does not contain third party libraries, you must provide those yourself
