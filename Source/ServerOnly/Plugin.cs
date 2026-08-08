@@ -23,8 +23,6 @@ public class Plugin : BaseUnityPlugin
             if (commandLineArgs[i] == "-batchmode")
             {
                 Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
-                Logger.LogInfo("first scene");
-                Logger.LogInfo(SceneUtility.GetScenePathByBuildIndex(0));
                 harmony.PatchAll();
                 break;
             }

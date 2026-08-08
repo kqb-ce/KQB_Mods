@@ -3,24 +3,32 @@ using LiquidBit.KillerQueenX;
 using Steamworks;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 namespace ServerOnly
 {
 
     [HarmonyPatch(typeof(SteamLobbyManager))]
-    [HarmonyPatch("CreateLobby")]
-    public static class CreateLobby_Patch
+    [HarmonyPatch("OnLobbyEnter_Internal")]
+    public static class GMP2P_Patch
     {
-        public static void Prefix(ELobbyType lobbyType, ref int maxMembers)
+        public static void Postfix(LobbyEnter_t callback)
         {
-            maxMembers = 12;
+            UnityEngine.Debug.Log("-----------DOING THIS----------");
+
+            string[] commandLineArgs = Environment.GetCommandLineArgs();
+            for (int i = 1; i < commandLineArgs.Length; i++)
+            {
+                UnityEngine.Debug.Log(commandLineArgs[i]);
+                if (commandLineArgs[i] == "--pass")
+                {
+                    UnityEngine.Debug.Log("setting password");
+                    SteamLobbyManager.Instance.SetPrivacy(true, LobbyKey.Hash(commandLineArgs[i + 1]), true);
+                    break;
+                }
+            }
         }
 
     }
@@ -111,7 +119,6 @@ namespace ServerOnly
                 string[] commandLineArgs = Environment.GetCommandLineArgs();
                 for (int i = 1; i < commandLineArgs.Length; i++)
                 {
-                    UnityEngine.Debug.Log(commandLineArgs[i]);
                     if (commandLineArgs[i] == "--lobby")
                     {
                         __result = commandLineArgs[++i];

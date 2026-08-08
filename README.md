@@ -1,7 +1,12 @@
 # Mods Description
 - `kqb.treebones.emotemapping.dll` - Re-enables remapping emotes from Options menu
 - `kqb.treebones.snailfix.dll` - Drone no longer appears behind snail on victory
+- `kqb.treebones.serveronly.dll` - allows you to run the game as a headless server. 
+  - To enable this mod, include `-batchmode -nographics --lobby <lobbyName>` in the steam launch options and a lobby with the named <lobbyName> will be started
+  - you can include `--pass <password>` to create a password-protected private lobby
+  - for example to create a lobby named `WEST` with the password `nice` use the launch options: `-batchmode -nographics --lobby WEST --pass nice`
 
+    <img src="https://i.imgur.com/tWeQXX0.png" width="800"/>
 ## Windows
 ### To Install for the first time
 1. Download The [Latest Release](https://github.com/kqb-ce/KQB_Mods/releases/download/v1.0.0/KQB_Mods.zip)
