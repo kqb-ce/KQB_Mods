@@ -43,6 +43,8 @@ namespace ServerOnly
             GMData addData = __instance.GetTime();
             addData.time = 0f;
             Application.targetFrameRate = Convert.ToInt32(1f / Time.fixedDeltaTime);
+            AudioListener.pause = true;
+            AudioListener.volume = 0;
         }
 
     }
