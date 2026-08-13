@@ -1,18 +1,15 @@
 ﻿using HarmonyLib;
 using LiquidBit.KillerQueenX;
-using Mono.Cecil;
 using NetLib;
 using Steamworks;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.TextCore.Text;
 
 namespace SteamCallbacks
 {
@@ -35,7 +32,6 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
 
             float unscaledDeltaTime = Time.unscaledDeltaTime;
 
-            // 1. Optimize connection removal (Avoid double lookup)
             if (___pendingRemoves.Count > 0)
             {
                 for (int i = 0; i < ___pendingRemoves.Count; i++)
@@ -52,7 +48,6 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
 
             if (___connections.Count > 0)
             {
-                // 2. Iterate connections using direct KeyValuePair struct enumeration
                 ___pingPollTimer += unscaledDeltaTime;
 
                 foreach (var kvp in ___connections)
@@ -63,7 +58,6 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
                     {
                         ___pingPollTimer = 0f;
 
-                        // Cache struct defaults outside loop
                         SteamNetConnectionRealTimeStatus_t status = default;
                         SteamNetConnectionRealTimeLaneStatus_t laneStatus = default;
 
@@ -75,7 +69,6 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
                         }
 
                     }
-                    //object value = kvp.Value;
                     traverse.Field("time").SetValue(traverse.Field("time").GetValue<double>() + (double)unscaledDeltaTime);
                     NetLib.Client netLibClient = traverse.Field("netLibClient").GetValue<NetLib.Client>();
                     netLibClient.Service(traverse.Field("time").GetValue<double>());
@@ -84,16 +77,15 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
                     {
                         switch (networkEvent.type)
                         {
-                            case NetLib.NetworkEvent.Type.Connect:
-                                traverse.Field("netLibConnected").SetValue(true);
-                                // String interpolation or conditional log prevents string.Format heap allocations
-                                UnityEngine.Debug.Log($"[SteamP2PRelay] Local NetLib connection established for {traverse.Field("remoteSteamId").GetValue<CSteamID>()}");
-                                break;
-
                             case NetLib.NetworkEvent.Type.Receive:
                                 Traverse.Create(__instance)
                      .Method("ForwardToSteam", traverse.Field("steamConn").GetValue<HSteamNetConnection>(), networkEvent.message)
                      .GetValue();
+                                break;
+                            case NetLib.NetworkEvent.Type.Connect:
+                                traverse.Field("netLibConnected").SetValue(true);
+
+                                UnityEngine.Debug.Log($"[SteamP2PRelay] Local NetLib connection established for {traverse.Field("remoteSteamId").GetValue<CSteamID>()}");
                                 break;
 
                             case NetLib.NetworkEvent.Type.Disconnect:
@@ -122,65 +114,58 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
             public static bool Prefix(HSteamNetConnection conn, NetLib.Message message)
             {
 
-                //int payloadSize = message.bitLength / 8;
-                //int totalSize = 1 + payloadSize;
-                //int sendFlags = (message.channel == 0) ? 5 : 8; // 5 = Reliable, 8 = Unreliable/NoNagle depending on flags
+                int payloadSize = message.bitLength / 8;
+                int totalSize = 1 + payloadSize;
+                int sendFlags = (message.channel == 0) ? 5 : 8;
 
-                //// Threshold for safe stack allocation (1KB is safe and covers 99%+ of game network messages)
-                //if (totalSize <= 1024)
-                //{
-                //    // Zero GC allocation stack buffer
-                //    Span<byte> stackBuffer = stackalloc byte[totalSize];
-                //    stackBuffer[0] = (byte)message.channel;
+                if (totalSize <= 1024)
+                {
+                    Span<byte> stackBuffer = stackalloc byte[totalSize];
+                    stackBuffer[0] = (byte)message.channel;
 
-                //    // Fast memory copy
-                //    message.data.AsSpan(0, payloadSize).CopyTo(stackBuffer.Slice(1));
+                    message.data.AsSpan(0, payloadSize).CopyTo(stackBuffer.Slice(1));
 
-                //    unsafe
-                //    {
-                //        fixed (byte* ptr = stackBuffer)
-                //        {
-                //            SteamNetworkingSockets.SendMessageToConnection(
-                //                conn,
-                //                (IntPtr)ptr,
-                //                (uint)totalSize,
-                //                sendFlags,
-                //                out long _
-                //            );
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    // Fallback for large packets: Rent from shared array pool (Zero GC garbage)
-                //    byte[] rentedArray = ArrayPool<byte>.Shared.Rent(totalSize);
-                //    try
-                //    {
-                //        rentedArray[0] = (byte)message.channel;
-                //        Buffer.BlockCopy(message.data, 0, rentedArray, 1, payloadSize);
+                    unsafe
+                    {
+                        fixed (byte* ptr = stackBuffer)
+                        {
+                            SteamNetworkingSockets.SendMessageToConnection(
+                                conn,
+                                (IntPtr)ptr,
+                                (uint)totalSize,
+                                sendFlags,
+                                out long _
+                            );
+                        }
+                    }
+                }
+                else
+                {
+                    byte[] rentedArray = ArrayPool<byte>.Shared.Rent(totalSize);
+                    try
+                    {
+                        rentedArray[0] = (byte)message.channel;
+                        Buffer.BlockCopy(message.data, 0, rentedArray, 1, payloadSize);
 
-                //        unsafe
-                //        {
-                //            fixed (byte* ptr = rentedArray)
-                //            {
-                //                SteamNetworkingSockets.SendMessageToConnection(
-                //                    conn,
-                //                    (IntPtr)ptr,
-                //                    (uint)totalSize,
-                //                    sendFlags,
-                //                    out long _
-                //                );
-                //            }
-                //        }
-                //    }
-                //    finally
-                //    {
-                //        ArrayPool<byte>.Shared.Return(rentedArray);
-                //    }
-                //}
-
-
-
+                        unsafe
+                        {
+                            fixed (byte* ptr = rentedArray)
+                            {
+                                SteamNetworkingSockets.SendMessageToConnection(
+                                    conn,
+                                    (IntPtr)ptr,
+                                    (uint)totalSize,
+                                    sendFlags,
+                                    out long _
+                                );
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        ArrayPool<byte>.Shared.Return(rentedArray);
+                    }
+                }
                 return false;
             }
         }
@@ -189,55 +174,98 @@ AccessTools.Method(typeof(SteamP2PHostRelay), "ForwardToSteam");
         [HarmonyPatch("ReceiveFromSteamAndForward")]
         public static class ReceiveFromSteamAndForward_Patch
         {
-            public static bool Prefix(object relayed)
+            public static IntPtr[] array = new IntPtr[64];
+            public static bool Prefix(SteamP2PHostRelay __instance, object relayed)
             {
-                return false;
-                if (!relayed.netLibConnected)
+                var traverse = Traverse.Create(relayed);
+                if (!traverse.Field("netLibConnected").GetValue<bool>())
                 {
-                    return;
+                    return false;
                 }
 
                 int num = SteamNetworkingSockets.ReceiveMessagesOnConnection(
-                    relayed.steamConn,
-                    this.messagePointers,
-                    this.messagePointers.Length
+                    traverse.Field("steamConn").GetValue<HSteamNetConnection>(),
+                    array,
+                    array.Length
                 );
 
                 for (int i = 0; i < num; i++)
                 {
-                    IntPtr msgPtr = this.messagePointers[i];
+                    IntPtr msgPtr = array[i];
 
                     unsafe
                     {
-                        // Cast direct pointer to struct without calling Marshal.PtrToStructure
                         SteamNetworkingMessage_t* msg = (SteamNetworkingMessage_t*)msgPtr;
                         int cbSize = msg->m_cbSize;
 
                         if (cbSize > 1)
                         {
-                            // Read channel directly from payload pointer
                             byte channel = *(byte*)msg->m_pData;
                             int payloadSize = cbSize - 1;
 
-                            // Option A: If netLibClient supports NativeArray/ReadOnlySpan/IntPtr (Zero Allocation)
-                            // IntPtr payloadPtr = msg->m_pData + 1;
-                            // relayed.netLibClient.SendMessage((int)channel, payloadPtr, payloadSize);
-
-                            // Option B: Single byte[] allocation offset by 1 byte
                             byte[] payload = new byte[payloadSize];
                             Marshal.Copy(msg->m_pData + 1, payload, 0, payloadSize);
-
-                            relayed.netLibClient.SendMessage((int)channel, payload, payloadSize * 8);
+                            traverse.Field("netLibClient").GetValue<NetLib.Client>().SendMessage((int)channel, payload, payloadSize * 8);
                         }
 
-                        // Release pointer static method call directly from struct pointer
                         SteamNetworkingMessage_t.Release(msgPtr);
                     }
                 }
+                return false;
             }
         }
 
-            [HarmonyPatch(typeof(CallbackDispatcher))]
+        [HarmonyPatch(typeof(SteamP2PClient))]
+        [HarmonyPatch("Service")]
+        public static class Service_Patch
+        {
+            public static bool Prefix(SteamP2PClient __instance, ref System.Collections.Generic.Queue<NetworkEvent> ___pendingEvents, ref bool ___isConnected, ref HSteamNetConnection ___connection, ref IntPtr[] ___msgPtrs, double time)
+            {
+                if (!___isConnected)
+                {
+                    return false;
+                }
+
+                int count = SteamNetworkingSockets.ReceiveMessagesOnConnection(___connection, ___msgPtrs, ___msgPtrs.Length);
+                unsafe
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        IntPtr msgPtr = ___msgPtrs[i];
+
+                        SteamNetworkingMessage_t* netMsg = (SteamNetworkingMessage_t*)msgPtr;
+                        int payloadSize = netMsg->m_cbSize;
+
+                        if (payloadSize > 0)
+                        {
+                            byte* dataPtr = (byte*)netMsg->m_pData;
+                            int channel = dataPtr[0];
+                            int dataSize = payloadSize - 1;
+
+                            byte[] messageData = new byte[dataSize];
+
+                            Marshal.Copy((IntPtr)(dataPtr + 1), messageData, 0, dataSize);
+
+                            ___pendingEvents.Enqueue(new NetworkEvent
+                            {
+                                type = NetworkEvent.Type.Receive,
+                                clientIndex = 0,
+                                message = new Message
+                                {
+                                    data = messageData,
+                                    bitLength = dataSize * 8,
+                                    channel = channel
+                                }
+                            });
+                        }
+
+                        SteamNetworkingMessage_t.Release(msgPtr);
+                    }
+                }
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(CallbackDispatcher))]
         [HarmonyPatch("RunFrame")]
         public static class Runframe_Patch
         {
