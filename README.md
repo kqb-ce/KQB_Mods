@@ -1,8 +1,8 @@
 # Mods Description
 - `kqb.treebones.dancinglosers.dll` - Dance your heart out, even when you lose
-- `kqb.devconsole.dll` - Re-enable dev console
-- `kqb.treebones.emotemapping.dll` - Re-enables remapping emotes from Options menu
-- `kqb.treebones.snailfix.dll` - Drone no longer appears behind snail on victory
+- `kqb.treebones.dancingisforbidden.dll` - Stop those losers from dancing! If you are host, loser dances will change back to clapping for all people in the lobby. If you are not host, losers will only clap for you.
+- `kqb.devconsole.dll` - Re-enable dev console. It's pretty useless these days.
+- `kqb.treebones.custommenubg.dll` - Miss the old, non-AI title screen? So did I. By default, this replaces it with the old art. But if you want custom art, add whatever jpgs or pngs you want to in `<KQB-Game-Directory>/Bepinex/plugins/images` and it'll randomly select an image when you launch the game.
 - `kqb.treebones.striprtf.dll` - Removes rtf tags from usernames
 - `kqb.treebones.serveronly.dll` - allows you to run the game as a headless server. 
   - To enable this mod, include `-batchmode -nographics --lobby <lobbyName>` in the steam launch options and a lobby with the named <lobbyName> will be started

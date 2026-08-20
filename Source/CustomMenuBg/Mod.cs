@@ -17,11 +17,15 @@ namespace RestoreMainMenu
     {
         public static bool Prefix(MainMenuVideoPlayer __instance)
         {
+
+            if(Plugin.CustomSprite == null)
+            {
+                Plugin.CustomSprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
+            }
             Transform parent = __instance.transform.parent;
             UnityEngine.UI.Image img = parent.GetComponentInChildren<UnityEngine.UI.Image>();
-            Debug.Log(img);
 
-            img.sprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
+            img.sprite = Plugin.CustomSprite;
 
 
             return false;
@@ -36,10 +40,13 @@ namespace RestoreMainMenu
         public static Sprite OldSplashSprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
         public static bool Prefix(IntroMenu __instance, ref CanvasGroup ___start)
         {
+            if (Plugin.CustomSprite == null)
+            {
+                Plugin.CustomSprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
+            }
             UnityEngine.UI.Image img = ___start.gameObject.GetComponentInChildren<UnityEngine.UI.Image>();
-            Debug.Log(img);
 
-            img.sprite = OldSplashSprite;
+            img.sprite = Plugin.CustomSprite;
 
 
             return true;
@@ -53,12 +60,16 @@ namespace RestoreMainMenu
     {
         public static bool Prefix(UI_Overlay __instance, ref CanvasGroup ___canvasGroup)
         {
+            if (Plugin.CustomSprite == null)
+            {
+                Plugin.CustomSprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
+            }
             UnityEngine.UI.Image[] imgs =___canvasGroup.GetComponentsInChildren<UnityEngine.UI.Image>(true);
             foreach(UnityEngine.UI.Image img in imgs)
             {
                 if (img.GetName() == "Title")
                 {
-                    img.sprite = GameManager.GMInstance.assetSystem.LoadAsset<Sprite>("Title-screen-Premenu_BG", "Assets/Sprites/UI/Background/Title-screen-Premenu_BG.png");
+                    img.sprite = Plugin.CustomSprite;
                 }
             }
 
